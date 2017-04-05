@@ -2,6 +2,7 @@
 %global python python36u
 
 %bcond_with tests
+%bcond_with docs
 
 Name:           %{python}-%{upstream_name}
 Version:        19.7.1
@@ -26,8 +27,10 @@ BuildRequires:  %{python}-pytest
 BuildRequires:  %{python}-pytest-cov
 BuildRequires:  %{python}-mock
 %endif
+%if %{with docs}
 BuildRequires:  python%{?fedora:2}-sphinx
 BuildRequires:  python%{?fedora:2}-sphinx_rtd_theme
+%endif
 Requires:       %{python}-setuptools
 
 
@@ -37,12 +40,14 @@ pre-fork worker model, ported from Ruby's Unicorn project. It supports WSGI and
 Paster applications.
 
 
+%if %{with docs}
 %package doc
 Summary:        Documentation for the %{name} package
 
 
 %description doc
 Documentation for the %{name} package.
+%endif
 
 
 %prep
@@ -54,7 +59,7 @@ Documentation for the %{name} package.
 
 %build
 %py36_build
-%{__python2} setup.py build_sphinx
+%{?with_docs:%{__python2} setup.py build_sphinx}
 
 
 %install
@@ -79,14 +84,18 @@ done
 %{_bindir}/%{upstream_name}_paster-%{python36_version}
 
 
+%if %{with docs}
 %files doc
 %license LICENSE
 %doc build/sphinx/html/*
+%endif
+
 
 %changelog
 * Tue Apr 04 2017 Carl George <carl.george@rackspace.com> - 19.7.1-1.ius
 - Port from Fedora to IUS
 - Conditionalize tests
+- Conditionalize docs
 
 * Wed Mar 29 2017 Dan Callaghan <dcallagh@redhat.com> - 19.7.1-1
 - upstream release 19.7.1: http://docs.gunicorn.org/en/19.7.1/news.html
