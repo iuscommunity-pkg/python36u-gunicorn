@@ -1,6 +1,8 @@
 %global upstream_name gunicorn
 %global python python36u
 
+%bcond_with tests
+
 Name:           %{python}-%{upstream_name}
 Version:        19.7.1
 Release:        1.ius%{?dist}
@@ -19,9 +21,11 @@ BuildArch:      noarch
 
 BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-setuptools
+%if %{with tests}
 BuildRequires:  %{python}-pytest
 BuildRequires:  %{python}-pytest-cov
 BuildRequires:  %{python}-mock
+%endif
 BuildRequires:  python%{?fedora:2}-sphinx
 BuildRequires:  python%{?fedora:2}-sphinx_rtd_theme
 Requires:       %{python}-setuptools
@@ -45,7 +49,7 @@ Documentation for the %{name} package.
 %setup -q -n %{upstream_name}-%{version}
 %patch1 -p1
 %patch101 -p1
-%patch102 -p1
+%{?with_tests:%patch102 -p1}
 
 
 %build
@@ -61,8 +65,10 @@ for executable in %{upstream_name} %{upstream_name}_paster ; do
 done
 
 
+%if %{with tests}
 %check
 %{__python36} setup.py test
+%endif
 
 
 %files
@@ -80,6 +86,7 @@ done
 %changelog
 * Tue Apr 04 2017 Carl George <carl.george@rackspace.com> - 19.7.1-1.ius
 - Port from Fedora to IUS
+- Conditionalize tests
 
 * Wed Mar 29 2017 Dan Callaghan <dcallagh@redhat.com> - 19.7.1-1
 - upstream release 19.7.1: http://docs.gunicorn.org/en/19.7.1/news.html
