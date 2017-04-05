@@ -1,9 +1,9 @@
-
 %global upstream_name gunicorn
+%global python python36u
 
-Name:           python-%{upstream_name}
+Name:           %{python}-%{upstream_name}
 Version:        19.7.1
-Release:        1%{?dist}
+Release:        1.ius%{?dist}
 Summary:        Python WSGI application server
 License:        MIT
 URL:            http://gunicorn.org/
@@ -17,47 +17,29 @@ Patch101:       0001-use-dev-log-for-syslog.patch
 Patch102:       0002-relax-version-requirements.patch
 BuildArch:      noarch
 
+BuildRequires:  %{python}-devel
+BuildRequires:  %{python}-setuptools
+BuildRequires:  %{python}-pytest
+BuildRequires:  %{python}-pytest-cov
+BuildRequires:  %{python}-mock
+BuildRequires:  python%{?fedora:2}-sphinx
+BuildRequires:  python%{?fedora:2}-sphinx_rtd_theme
+Requires:       %{python}-setuptools
+
+
 %description
-Gunicorn ("Green Unicorn") is a Python WSGI HTTP server for UNIX. It uses the 
-pre-fork worker model, ported from Ruby's Unicorn project. It supports WSGI, 
-Django, and Paster applications.
+Gunicorn ("Green Unicorn") is a Python WSGI HTTP server for UNIX. It uses the
+pre-fork worker model, ported from Ruby's Unicorn project. It supports WSGI and
+Paster applications.
 
-%package -n python2-%{upstream_name}
-Summary:        %{summary}
-%{?python_provide:%python_provide python2-%{upstream_name}}
-BuildRequires:  python2-devel
-BuildRequires:  python2-setuptools
-BuildRequires:  python2-pytest
-BuildRequires:  python2-mock
-BuildRequires:  python2-pytest-cov
-BuildRequires:  python2-sphinx
-BuildRequires:  python2-sphinx_rtd_theme
-Requires:       python2-setuptools
-
-%description -n python2-%{upstream_name}
-Gunicorn ("Green Unicorn") is a Python WSGI HTTP server for UNIX. It uses the 
-pre-fork worker model, ported from Ruby's Unicorn project. It supports WSGI, 
-Django, and Paster applications.
-
-%package -n python3-%{upstream_name}
-Summary:        %{summary}
-%{?python_provide:%python_provide python3-%{upstream_name}}
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-BuildRequires:  python3-pytest
-BuildRequires:  python3-pytest-cov
-Requires:       python3-setuptools
-
-%description -n python3-%{upstream_name}
-Gunicorn ("Green Unicorn") is a Python WSGI HTTP server for UNIX. It uses the 
-pre-fork worker model, ported from Ruby's Unicorn project. It supports WSGI, 
-Django, and Paster applications.
 
 %package doc
 Summary:        Documentation for the %{name} package
 
+
 %description doc
 Documentation for the %{name} package.
+
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
@@ -65,45 +47,40 @@ Documentation for the %{name} package.
 %patch101 -p1
 %patch102 -p1
 
+
 %build
-%py2_build
-%py3_build
+%py36_build
 %{__python2} setup.py build_sphinx
 
+
 %install
-%py3_install
+%py36_install
 # rename executables in /usr/bin so they don't collide
 for executable in %{upstream_name} %{upstream_name}_paster ; do
-    mv %{buildroot}%{_bindir}/$executable %{buildroot}%{_bindir}/python3-$executable
+    mv %{buildroot}%{_bindir}/$executable %{buildroot}%{_bindir}/$executable-%{python36_version}
 done
-%py2_install
-# need to remove gaiohttp worker from the Python 2 version, it is supported on 
-# Python 3 only and it fails byte compilation on 2.x due to using "yield from"
-rm %{buildroot}%{python2_sitelib}/%{upstream_name}/workers/_gaiohttp.py*
+
 
 %check
-%{__python2} setup.py test
-%{__python3} setup.py test
+%{__python36} setup.py test
 
-%files -n python2-%{upstream_name}
+
+%files
 %license LICENSE
 %doc NOTICE README.rst THANKS
-%{python2_sitelib}/%{upstream_name}*
-%{_bindir}/%{upstream_name}
-%{_bindir}/%{upstream_name}_paster
+%{python36_sitelib}/%{upstream_name}*
+%{_bindir}/%{upstream_name}-%{python36_version}
+%{_bindir}/%{upstream_name}_paster-%{python36_version}
 
-%files -n python3-%{upstream_name}
-%license LICENSE
-%doc NOTICE README.rst THANKS
-%{python3_sitelib}/%{upstream_name}*
-%{_bindir}/python3-%{upstream_name}
-%{_bindir}/python3-%{upstream_name}_paster
 
 %files doc
 %license LICENSE
 %doc build/sphinx/html/*
 
 %changelog
+* Tue Apr 04 2017 Carl George <carl.george@rackspace.com> - 19.7.1-1.ius
+- Port from Fedora to IUS
+
 * Wed Mar 29 2017 Dan Callaghan <dcallagh@redhat.com> - 19.7.1-1
 - upstream release 19.7.1: http://docs.gunicorn.org/en/19.7.1/news.html
 
