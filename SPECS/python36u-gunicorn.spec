@@ -5,19 +5,14 @@
 %bcond_with docs
 
 Name:           %{python}-%{upstream_name}
-Version:        19.7.1
+Version:        19.8.1
 Release:        1.ius%{?dist}
 Summary:        Python WSGI application server
 License:        MIT
 URL:            http://gunicorn.org/
 Source0:        https://files.pythonhosted.org/packages/source/g/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
-# We already have aiohttp 2.x in F27+ so we need this fix now, to get the tests passing
-# https://github.com/benoitc/gunicorn/pull/1418
-Patch1:         deprecate-gaiohttp-worker.patch
 # distro-specific, not upstreamable
 Patch101:       0001-use-dev-log-for-syslog.patch
-# upstream version requirements are unnecessarily strict
-Patch102:       0002-relax-version-requirements.patch
 BuildArch:      noarch
 
 BuildRequires:  %{python}-devel
@@ -52,9 +47,7 @@ Documentation for the %{name} package.
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
-%patch1 -p1
 %patch101 -p1
-%{?with_tests:%patch102 -p1}
 
 
 %build
@@ -92,6 +85,9 @@ done
 
 
 %changelog
+* Fri May 04 2018 Carl George <carl@george.computer> - 19.8.1-1.ius
+- Latest upstream
+
 * Tue Apr 04 2017 Carl George <carl.george@rackspace.com> - 19.7.1-1.ius
 - Port from Fedora to IUS
 - Conditionalize tests
