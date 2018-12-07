@@ -5,7 +5,7 @@
 %bcond_with docs
 
 Name:           %{python}-%{upstream_name}
-Version:        19.8.1
+Version:        19.9.0
 Release:        1.ius%{?dist}
 Summary:        Python WSGI application server
 License:        MIT
@@ -85,6 +85,9 @@ done
 
 
 %changelog
+* Fri Dec 7 2018 evitalis <evitalis@users.noreply.github.com> 19.9.0.ius
+- Latest upstream
+
 * Fri May 04 2018 Carl George <carl@george.computer> - 19.8.1-1.ius
 - Latest upstream
 
