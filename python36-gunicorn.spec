@@ -1,6 +1,10 @@
 %global upstream_name gunicorn
 %global python python36
 
+%if %{defined el6}
+%global __python3 /usr/bin/python3.6
+%endif
+
 %bcond_with tests
 %bcond_with docs
 
@@ -55,30 +59,30 @@ Documentation for the %{name} package.
 
 
 %build
-%py36_build
+%py3_build
 %{?with_docs:%{__python2} setup.py build_sphinx}
 
 
 %install
-%py36_install
+%py3_install
 # rename executables in /usr/bin so they don't collide
 for executable in %{upstream_name} %{upstream_name}_paster ; do
-    mv %{buildroot}%{_bindir}/$executable %{buildroot}%{_bindir}/$executable-%{python36_version}
+    mv %{buildroot}%{_bindir}/$executable %{buildroot}%{_bindir}/$executable-%{python3_version}
 done
 
 
 %if %{with tests}
 %check
-%{__python36} setup.py test
+%{__python3} setup.py test
 %endif
 
 
 %files
 %license LICENSE
 %doc NOTICE README.rst THANKS
-%{python36_sitelib}/%{upstream_name}*
-%{_bindir}/%{upstream_name}-%{python36_version}
-%{_bindir}/%{upstream_name}_paster-%{python36_version}
+%{python3_sitelib}/%{upstream_name}*
+%{_bindir}/%{upstream_name}-%{python3_version}
+%{_bindir}/%{upstream_name}_paster-%{python3_version}
 
 
 %if %{with docs}
@@ -91,6 +95,7 @@ done
 %changelog
 * Sat Sep 21 2019 Carl George <carl@george.computer> - 19.8.1-2
 - Rename to python36-setuptools
+- Switch to EPEL python3 macros
 
 * Fri May 04 2018 Carl George <carl@george.computer> - 19.8.1-1.ius
 - Latest upstream
