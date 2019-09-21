@@ -1,12 +1,12 @@
 %global upstream_name gunicorn
-%global python python36u
+%global python python36
 
 %bcond_with tests
 %bcond_with docs
 
 Name:           %{python}-%{upstream_name}
 Version:        19.8.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python WSGI application server
 License:        MIT
 URL:            http://gunicorn.org/
@@ -27,6 +27,10 @@ BuildRequires:  python%{?fedora:2}-sphinx
 BuildRequires:  python%{?fedora:2}-sphinx_rtd_theme
 %endif
 Requires:       %{python}-setuptools
+
+# Rename from python36u-gunicorn
+Provides: python36u-gunicorn = %{version}-%{release}
+Obsoletes: python36u-gunicorn < 19.8.1-2
 
 
 %description
@@ -85,6 +89,9 @@ done
 
 
 %changelog
+* Sat Sep 21 2019 Carl George <carl@george.computer> - 19.8.1-2
+- Rename to python36-setuptools
+
 * Fri May 04 2018 Carl George <carl@george.computer> - 19.8.1-1.ius
 - Latest upstream
 
