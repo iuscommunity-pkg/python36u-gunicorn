@@ -6,7 +6,7 @@
 
 Name:           %{python}-%{upstream_name}
 Version:        19.8.1
-Release:        1.ius%{?dist}
+Release:        1%{?dist}
 Summary:        Python WSGI application server
 License:        MIT
 URL:            http://gunicorn.org/
